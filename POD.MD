@@ -153,12 +153,77 @@ spec:
 
 ---
 
-# 📘 Assignment
 
-Please create the following Pods using YAML:
+# Kubernetes Pod Lifecycle
 
-- ✅ `tomcat`
-- ✅ `jenkins`
-- ✅ `mongo`
+Understanding how a Pod behaves from creation to termination helps in troubleshooting and effective cluster management.
+
+## 🚦 Pod Lifecycle Stages
+
+```text
+Pending   -->   Scheduled   -->   Running   -->   Succeeded / Failed / CrashLoopBackOff
+```
+
+### 1. 🟡 Pending
+- Pod is created but not yet scheduled to any node.
+- Reasons: Image pull pending, node not available, resource constraints.
+
+### 2. 🔵 Scheduled
+- Kubernetes Scheduler assigns the Pod to a suitable node.
+- Node selection based on CPU, memory, affinity rules, taints, etc.
+
+### 3. 🟢 Running
+- Pod is successfully started on the node.
+- All containers in the pod are up and running.
+
+### 4. ✅ Succeeded
+- All containers in the Pod have completed successfully and will not restart.
+- Usually for short-lived batch jobs.
+
+### 5. ❌ Failed
+- One or more containers exited with an error.
+- Pod won’t restart by itself unless managed by a controller.
+
+### 6. 🔁 CrashLoopBackOff
+- Container starts, crashes, and Kubernetes retries it repeatedly.
+- Often caused by misconfiguration, failed dependencies, etc.
+
+## 🔄 Summary Table
+
+| Phase               | Description                                          |
+|---------------------|------------------------------------------------------|
+| Pending             | Awaiting scheduling or image pull                    |
+| Scheduled           | Assigned to a node                                   |
+| Running             | All containers are active                            |
+| Succeeded           | All containers completed successfully                |
+| Failed              | Containers exited with errors                        |
+| CrashLoopBackOff    | Container keeps crashing; being restarted repeatedly |
 
 ---
+
+### 🔍 Useful Commands
+
+```bash
+kubectl get pods
+kubectl describe pod <pod-name>
+kubectl logs <pod-name>
+kubectl get events --sort-by=.metadata.creationTimestamp
+```
+
+## 📦 Example Pod YAML with Explanation
+
+```yaml
+apiVersion: v1                      # Kubernetes API version
+kind: Pod                           # Resource type is Pod
+metadata:
+  name: nginx-pod                   # Name of the pod
+  labels:
+    app: web                        # Label to identify pod group
+spec:
+  containers:                       # List of containers in the pod
+    - name: nginx                   # Name of the container
+      image: nginx:1.21             # Docker image to use
+      ports:
+        - containerPort: 80         # Port exposed inside the container
+```
+
