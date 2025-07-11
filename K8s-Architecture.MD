@@ -164,6 +164,35 @@ Imagine you're running an e-commerce website:
 
 ---
 
+1. kubectl is a CLI tool installed on local machines or CI/CD servers (like Jenkins) to interact with the Kubernetes cluster.
+
+2. When a user runs a command (e.g., kubectl apply -f app.yaml), it sends an HTTPS request to the API Server.
+
+3. The API Server:
+   - Validates the request
+   - Authenticates the user
+   - Stores desired state in etcd (cluster database)
+
+4. If the request is to create a pod, the Scheduler picks it up,
+   - Chooses the best worker node based on resources and constraints
+   - Writes the node assignment back to etcd
+
+5. The Controller Manager ensures that the actual state matches the desired state (e.g., number of pods, replicas). If something fails, it re-creates or reschedules.
+
+6. Cloud Controller Manager interacts with cloud providers (e.g., provisioning load balancers, volumes).
+
+7. Kubelet on the selected worker node:
+   - Pulls the pod spec from API Server
+   - Uses CRI to run the container inside a pod
+   - Monitors and reports pod status
+
+8. Kube Proxy on each node:
+   - Handles service networking
+   - Routes internal/external traffic to the correct pod
+
+9. Pods are the smallest deployable units that contain one or more containers, where your applications (e.g., app servers, DBs) actually run.
+
+
 ## 📝 Conclusion
 
 Kubernetes is like a smart city management system that ensures all citizens (containers) live in harmony, follow rules, get scheduled tasks, and communicate reliably. Understanding its components with metaphors helps grasp its complex ecosystem effectively.
