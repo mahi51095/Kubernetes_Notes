@@ -4,6 +4,42 @@
 This YAML creates a ReplicaSet and a Service for a Java web application in Kubernetes. Let’s break down each line and relate it to a **real-world restaurant** scenario.
 
 ---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: javawebapprs
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: javawebapp
+  template:
+    metadata:
+      name: javawebapp
+      labels:
+        app: javawebapp
+    spec:
+      containers:
+        - name: javawebapp
+          image: kkeducationb2/java-webapp:1.1
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: javawebappsvc
+spec:
+  type: NodePort
+  selector:
+    app: javawebapp
+  ports:
+    - port: 80
+      targetPort: 8080
+      nodePort: 30080
+
+
+---
 
 ## 📦 ReplicaSet Section
 
